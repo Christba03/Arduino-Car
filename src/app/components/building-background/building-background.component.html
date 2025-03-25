@@ -1,0 +1,29 @@
+<div class="buildings-container">
+  <!-- First building group moving right -->
+  <div class="building-group moving-right">
+    <div class="building" 
+         *ngFor="let building of buildings; trackBy: trackByFn"
+         [style.--height]="building.height"
+         [style.--width]="building.width"
+         [style.--color]="building.color">
+      <div class="building-details">
+        <div class="window-row" *ngFor="let w of [1,2,3,4]"></div>
+      </div>
+      <div class="building-top"></div>
+    </div>
+  </div>
+  
+  <!-- Second building group for seamless looping -->
+  <div class="building-group moving-right">
+    <div class="building" 
+         *ngFor="let building of buildings; trackBy: trackByFn"
+         [style.--height]="building.height"
+         [style.--width]="building.width"
+         [style.--color]="building.color">
+      <div class="building-details">
+        <div class="window-row" *ngFor="let w of [1,2,3,4]"></div>
+      </div>
+      <div class="building-top"></div>
+    </div>
+  </div>
+</div>

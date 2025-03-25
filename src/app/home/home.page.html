@@ -1,0 +1,21 @@
+<ion-content [fullscreen]="true">
+  <!-- Background layers -->
+  <app-weather-background [weather]="currentWeather"></app-weather-background>
+  <app-building-background></app-building-background>
+  
+  <!-- Road and car -->
+  <div class="road-container">
+    <app-road></app-road>
+  </div>
+  <div class="car-container">
+    <app-car></app-car>
+  </div>
+  <!-- Controls -->
+   <app-control-panel></app-control-panel>
+  
+  <!-- Effects -->
+  <app-light-ray [angle]="120" [duration]="2.5" [intensity]="0.6"></app-light-ray>
+  
+  <!-- Weather controls footer -->
+  <app-weather-footer (weatherChange)="setWeather($event)"></app-weather-footer>
+</ion-content>

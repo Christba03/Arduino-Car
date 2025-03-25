@@ -1,0 +1,41 @@
+ion-footer {
+    ion-toolbar {
+      --background: rgba(255, 255, 255, 0.8);
+      --border-width: 0;
+      padding: 0;
+      
+      ion-segment {
+        --background: transparent;
+        width: 100%;
+        justify-content: center;
+        
+        ion-segment-button {
+          --color: #666;
+          --color-checked: var(--ion-color-primary);
+          --indicator-color: transparent;
+          min-width: auto;
+          
+          ion-label {
+            font-size: 0.8rem;
+            padding: 0 8px;
+          }
+        }
+      }
+    }
+  }
+  
+  /* For larger screens */
+  @media (min-width: 768px) {
+    ion-footer {
+      ion-toolbar {
+        ion-segment {
+          ion-segment-button {
+            ion-label {
+              font-size: 1rem;
+              padding: 0 12px;
+            }
+          }
+        }
+      }
+    }
+  }

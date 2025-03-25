@@ -1,0 +1,90 @@
+$color-secondary: #191970; // Midnight Blue
+$color-tertiary: #003366; // Dark Blue
+$color-rose-dark: #0a2351; // Navy Blue
+$color-rose-light: #1a237e; // Indigo
+$color-orange: #0d1b2a; // Dark Navy
+$color-green-bright: #2a3f5f; // Dark Slate Blue
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  z-index: 10;
+  background: linear-gradient(135deg, rgba(26,35,126,0.2) 0%, rgba(10,35,81,0.2) 100%);
+}
+
+.form_area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+  padding: 30px;
+  border: 2px solid $color-secondary;
+  border-radius: 20px;
+  box-shadow: 3px 4px 0px 1px $color-tertiary;
+  width: 400px;
+}
+
+.title {
+  color: $color-secondary;
+  font-weight: 900;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.controls_grid {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.control_column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+
+.bottom_controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 15px;
+  border-top: 1px solid rgba($color-secondary, 0.2);
+}
+
+.claxon_button {
+  background-color: $color-secondary;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: darken($color-secondary, 10%);
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.music_toggle {
+  margin-left: auto;
+}

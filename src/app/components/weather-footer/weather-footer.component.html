@@ -1,0 +1,18 @@
+<ion-footer>
+  <ion-toolbar>
+    <ion-segment [value]="currentWeather" (ionChange)="onWeatherChange($event)">
+      <ion-segment-button value="soleado">
+        <ion-label>Sunny</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="nublado">
+        <ion-label>Cloudy</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="lluvia">
+        <ion-label>Rainy</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="nevado">
+        <ion-label>Snowy</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-footer>

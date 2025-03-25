@@ -1,0 +1,7 @@
+{
+  "name": "control-car",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

@@ -1,0 +1,10 @@
+<div class="weather-background" [class]="weather">
+  <!-- Sun elements (only for sunny weather) -->
+  <span *ngIf="weather === 'soleado'" class="sunshine"></span>
+  <span *ngIf="weather === 'soleado'" class="sun"></span>
+  
+  <!-- Snowflakes container (only for snowy weather) -->
+  <ul *ngIf="weather === 'nevado'">
+    <li *ngFor="let item of snowflakes"></li>
+  </ul>
+</div>

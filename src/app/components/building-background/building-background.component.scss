@@ -1,0 +1,65 @@
+.buildings-container {
+  position: absolute;
+  bottom: 100px; // Match road height
+  left: 0;
+  width: 100%;
+  height: 55vh;
+  display: flex;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.building-group {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  animation: scrollBuildingsRight 20s linear infinite;
+  flex-shrink: 0;
+}
+
+.building {
+  min-width: var(--width);
+  height: var(--height);
+  background: var(--color);
+  position: relative;
+  margin-right: 2px;
+  flex-shrink: 0;
+
+  .building-details {
+    position: absolute;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+    padding: 5px;
+    
+    .window-row {
+      height: 20%;
+      margin-bottom: 5px;
+      background: repeating-linear-gradient(
+        to right,
+        #ffd700,
+        #ffd700 5px,
+        transparent 5px,
+        transparent 15px
+      );
+    }
+  }
+
+  .building-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: #333;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes scrollBuildingsRight {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
