@@ -17,14 +17,16 @@ import { VehicleControlService } from 'src/app/service/vehicle-control.service';
   ]
 })
 export class ControlPanelComponent {
-  constructor(private vehicleControl: VehicleControlService) {}
+  dayNightMode = false;
+
+  constructor(private vehicleControl: VehicleControlService) {
+    this.dayNightMode = this.vehicleControl.getDayNightMode();
+
+  }
 
   // Bind these directly to your template
-  get dayNightMode(): boolean {
-    return this.vehicleControl.getDayNightMode();
-  }
-  set dayNightMode(state: boolean) {
-    this.vehicleControl.setDayNightMode(state);
+  onDayNightChange() {
+    this.vehicleControl.setDayNightMode(this.dayNightMode);
   }
 
   get headlightsOn(): boolean {
@@ -73,5 +75,9 @@ export class ControlPanelComponent {
   onMusicToggle(state: boolean) {
     console.log('Music state changed:', state);
     // Add your music control logic here
+  }
+  toggleDayNightMode() {
+    const current = this.vehicleControl.getDayNightMode();
+    this.vehicleControl.setDayNightMode(!current);
   }
 }

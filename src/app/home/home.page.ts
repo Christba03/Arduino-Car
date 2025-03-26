@@ -11,8 +11,11 @@ import { CarComponent } from '../components/car/car.component';
 import { LightRayComponent } from '../components/light-ray/light-ray.component';
 import { WeatherFooterComponent } from '../components/weather-footer/weather-footer.component';
 import { ControlPanelComponent } from '../components/control-panel/control-panel.component';
-import { WeatherType } from '../service/vehicle-control.service'; // Import WeatherType
+import { WeatherType } from '../service/vehicle-control.service';
 import { VehicleControlService } from '../service/vehicle-control.service';
+import { GrayscaleFilterComponent } from '../components/grayscale-filter/grayscale-filter.component';
+import { AsyncPipe, NgIf } from '@angular/common'; // Added NgIf
+import { startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -21,19 +24,24 @@ import { VehicleControlService } from '../service/vehicle-control.service';
   standalone: true,
   imports: [
     FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonFooter, IonSegment, IonSegmentButton, IonIcon,
+    IonContent,
     WeatherBackgroundComponent,
     BuildingBackgroundComponent,
     RoadComponent,
     CarComponent,
     LightRayComponent,
     WeatherFooterComponent,
-    ControlPanelComponent
+    ControlPanelComponent,
+    GrayscaleFilterComponent,
+    AsyncPipe,
+    NgIf 
   ]
 })
 export class HomePage {
-  currentWeather: WeatherType = 'soleado'; // Use imported WeatherType
+  currentWeather: WeatherType = 'soleado';
+  dayNightMode$ = this.vehicleControlService.dayNightMode$.pipe(
+    startWith(false)
+  );
   
   constructor(private vehicleControlService: VehicleControlService) {}
 

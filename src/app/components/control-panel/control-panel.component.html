@@ -6,7 +6,8 @@
       <div class="control_column">
         <app-custom-toggle 
           [label]="'Day/Night'" 
-          [(ngModel)]="dayNightMode">
+          [(ngModel)]="dayNightMode"
+          (ngModelChange)="onDayNightChange()">
         </app-custom-toggle>
         
         <app-custom-toggle 
