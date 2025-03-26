@@ -10,7 +10,11 @@ import { IonContent } from '@ionic/angular/standalone';
   
 })
 export class CarComponent  implements OnInit {
-  headlightsOn: boolean = true; // Initialize to false (lights off)
+  backlights: boolean = false; // Initialize to false (lights off)
+  cabinLightsOn: boolean = false; // For white cabin lights
+  frontLightsOn: boolean = false; 
+  wipersOn: boolean = true; // Control wiper animation
+
   constructor() { }
 
   ngOnInit() {}

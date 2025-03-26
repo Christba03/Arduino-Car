@@ -1,425 +1,649 @@
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 230">
-      <defs>
-        <!-- Light glow filter -->
-        <filter id="backlightGlow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-        </filter>
-        
-        <!-- Optional: Different filter for headlights -->
-        <filter id="headlightGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="4" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-          <feColorMatrix type="matrix"
-            values="1 0 0 0 0
-                    0 1 0 0 0
-                    0 0 1 0 0
-                    0 0 0 8 0"/>
-        </filter>
-      </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 230">
+  <defs>
+    <!-- Ultimate car light filter with red glow -->
+    <filter id="ultimateRedGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <!-- Base glow - make this pure red -->
+      <feGaussianBlur stdDeviation="1" result="blur1" />
+      <feColorMatrix
+        type="matrix"
+        result="redBlur1"
+        values="1 0 0 0 0
+             0 0 0 0 0
+             0 0 0 0 0
+             0 0 0 1 0"
+        in="blur1"
+      />
+      <feComposite
+        in="SourceGraphic"
+        in2="redBlur1"
+        operator="over"
+        result="comp1"
+      />
+
+      <!-- Secondary glow - also pure red but more diffuse -->
+      <feGaussianBlur stdDeviation="1" in="comp1" result="blur2" />
+      <feColorMatrix
+        type="matrix"
+        result="redBlur2"
+        values="1 0 0 0 0
+             0 0 0 0 0
+             0 0 0 0 0
+             0 0 0 0.8 0"
+        in="blur2"
+      />
+      <feComposite in="comp1" in2="redBlur2" operator="over" result="comp2" />
+
+      <!-- Color boost - enhance red and suppress other colors -->
+      <feColorMatrix
+        type="matrix"
+        values="2   0   0   0 0
+             0   0.3 0   0 0
+             0   0   0.3 0 0
+             0   0   0   1 0"
+        in="comp2"
+        result="colorBoost"
+      />
+
+      <!-- Final blur to smooth it out -->
+      <feGaussianBlur stdDeviation="2" in="colorBoost" result="finalBlur" />
+      <feComposite in="colorBoost" in2="finalBlur" operator="over" />
+    </filter>
+    <!-- White glow filter for cabin lights -->
+    <filter id="cabinLightGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <!-- Base glow - white -->
+      <feGaussianBlur stdDeviation="1" result="blur1" />
+      <feColorMatrix
+        type="matrix"
+        result="whiteBlur1"
+        values="1 0 0 0 0
+       1 0 0 0 0
+       1 0 0 0 0
+       0 0 0 1 0"
+        in="blur1"
+      />
+      <feComposite
+        in="SourceGraphic"
+        in2="whiteBlur1"
+        operator="over"
+        result="comp1"
+      />
+
+      <!-- Secondary glow -->
+      <feGaussianBlur stdDeviation="1.5" in="comp1" result="blur2" />
+      <feColorMatrix
+        type="matrix"
+        result="whiteBlur2"
+        values="1 0 0 0 0
+       1 0 0 0 0
+       1 0 0 0 0
+       0 0 0 0.8 0"
+        in="blur2"
+      />
+      <feComposite in="comp1" in2="whiteBlur2" operator="over" result="comp2" />
+
+      <!-- Color boost - enhance brightness -->
+      <feColorMatrix
+        type="matrix"
+        values="1.5 0   0   0 0
+       1.5 0   0   0 0
+       1.5 0   0   0 0
+       0   0   0   1 0"
+        in="comp2"
+        result="brightBoost"
+      />
+
+      <!-- Final blur to smooth it out -->
+      <feGaussianBlur stdDeviation="1" in="brightBoost" result="finalBlur" />
+      <feComposite in="brightBoost" in2="finalBlur" operator="over" />
+    </filter>
 
 
+    <filter id="strongWhiteGlow" x="-150%" y="-150%" width="800%" height="800%">
+      <feGaussianBlur stdDeviation="1" result="blur1" />
+      <feColorMatrix
+        type="matrix"
+        result="whiteBlur1"
+        values="1 0 0 0 0
+       1 0 0 0 0
+       1 0 0 0 0
+       0 0 0 1 0"
+        in="blur1"
+      />
+      <feComposite
+        in="SourceGraphic"
+        in2="whiteBlur1"
+        operator="over"
+        result="comp1"
+      />
 
+      <!-- Secondary glow -->
+      <feGaussianBlur stdDeviation="1.5" in="comp1" result="blur2" />
+      <feColorMatrix
+        type="matrix"
+        result="whiteBlur2"
+        values="1 0 0 0 0
+       1 0 0 0 0
+       1 0 0 0 0
+       0 0 0 0.8 0"
+        in="blur2"
+      />
+      <feComposite in="comp1" in2="whiteBlur2" operator="over" result="comp2" />
 
-      <g
-      id="Layer_2"
-      transform="matrix(2.8320232,0,0,2.8320232,-805.13534,-1009.8995)">
-     
-     
-     
-     
-     
-     <ellipse
+      <!-- Color boost - enhance brightness -->
+      <feColorMatrix
+        type="matrix"
+        values="1.5 0   0   0 0
+       1.5 0   0   0 0
+       1.5 0   0   0 0
+       0   0   0   1 0"
+        in="comp2"
+        result="brightBoost"
+      />
+
+      <!-- Final blur to smooth it out -->
+      <feGaussianBlur stdDeviation="1" in="brightBoost" result="finalBlur" />
+      <feComposite in="brightBoost" in2="finalBlur" operator="over" />
+    </filter>
+  </defs>
+
+  <g
+    id="Layer_2"
+    transform="matrix(2.8320232,0,0,2.8320232,-805.13534,-1009.8995)"
+  >
+    <ellipse
       cx="345.5"
       cy="437.10001"
       rx="61.200001"
       ry="1.1"
       id="ellipse60"
-      inkscape:label="shadow" /><g
-      id="g3"
-      inkscape:label="behind-right-wheel"><path
+      inkscape:label="shadow"
+    />
+    <g id="g3" inkscape:label="behind-right-wheel">
+      <path
         class="st5"
         d="m 370.1,422.8 c 0,5.3 -2.7,11.6 -7.3,13.2 -1.8,0.6 -3.9,0.5 -5.3,0.5 -1.3,0 -4.1,-0.1 -6.3,-1.2 -4.3,-2 -6.6,-7.6 -6.5,-12.4 0.2,-7.9 7.2,-12.2 7.7,-12.5 1.2,-0.5 3.2,-1.1 5.8,-1.2 0.7,0 2.9,0.1 4.8,0.7 4,1.5 7,7.5 7.1,12.9 z"
-        id="path4" /><ellipse
+        id="path4"
+      />
+      <ellipse
         class="st6"
         cx="359.10001"
         cy="422.89999"
         rx="7.5999999"
         ry="10"
-        id="ellipse4" /></g>
-     
-     <g
-      id="g2"
-      inkscape:label="front-right-wheel"><path
+        id="ellipse4"
+      />
+    </g>
+
+    <g id="g2" inkscape:label="front-right-wheel">
+      <path
         class="st5"
         d="m 309.7,422.8 c 0,5.3 -2.7,11.6 -7.3,13.2 -1.8,0.6 -3.9,0.5 -5.3,0.5 -1.3,0 -4.1,-0.1 -6.3,-1.2 -4.3,-2 -6.6,-7.6 -6.5,-12.4 0.2,-7.9 7.2,-12.2 7.7,-12.5 1.2,-0.5 3.2,-1.1 5.8,-1.2 0.7,0 2.9,0.1 4.8,0.7 4.1,1.5 7.1,7.5 7.1,12.9 z"
-        id="path5" /><ellipse
+        id="path5"
+      />
+      <ellipse
         class="st6"
         cx="298.79999"
         cy="422.89999"
         rx="7.5999999"
         ry="10"
-        id="ellipse5" /></g>
-     <path
+        id="ellipse5"
+      />
+    </g>
+    <path
       class="st4"
       d="m 402.2,405.5 c -0.6,1.2 -1.2,2.3 -1.8,3.5 0,0.6 -0.1,1.3 -0.1,1.9 1.6,0 3.1,0 4.7,0 0.4,0.4 1.6,1.8 1.8,4 0.1,2.5 -1.3,4.2 -1.6,4.5 -3.7,0 -7.3,-0.1 -11,-0.1 -2.1,1.2 -4.1,2.4 -6.2,3.6 -28.9,0.3 -57.8,0.7 -86.6,1 -2.7,-3.2 -5.4,-6.4 -8.2,-9.6 6.5,0 13,-0.1 19.4,-0.1 3.3,-2.4 6.6,-4.8 9.9,-7.2 4.7,0.1 9.5,0.2 14.2,0.4 1.4,2.5 2.9,5 4.6,7.6 1.5,2.4 3,4.7 4.6,6.8 9.5,0 18.9,0 28.3,-0.1 1.6,-2.8 3.2,-5.5 4.9,-8.3 1.7,-2.6 3.5,-5.3 5.2,-7.9 z"
       id="path6"
-      inkscape:label="under-chasis" />
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     <path
+      inkscape:label="under-chasis"
+    />
+
+    <path
       class="st14"
       d="m 350.94054,377.33782 c -0.6,2.8 -1.15945,5.91624 -1.74054,8.66218 -0.6,2.9 -1.1,5.7 -1.6,8.5 h -29 c 1.4,-1.9 2.7,-3.9 4.1,-5.8 H 317 c -1.7,1.9 -3.5,3.9 -5.2,5.8 h -2.5 c -2.3,0 -4.7,0 -7,-0.1 4.9,-3.5 10.5,-7 16.6,-10.5 4.4,-2.5 8.7,-4.68109 12.7,-6.58109 6.48746,0.0411 12.89348,0.0688 19.34054,0.0189 z"
       id="path17"
       sodipodi:nodetypes="cccccccscccc"
-      inkscape:label="wind-shield" />
-     
-     
-     
-     
-     
-     
-     
-      <path
+      inkscape:label="wind-shield"
+    />
+
+    <path
       class="st19 backlight"
-      [attr.filter]="headlightsOn ? 'url(#backlightGlow)' : null"
-      [attr.fill]="headlightsOn ? '#ffcc00' : '#444'"
+      [attr.filter]="backlights ? 'url(#ultimateRedGlow)' : null"
+      [attr.fill]="backlights ? '#ff0000' : '#3F1A2B'"
       d="m 403,405.5 h -0.8 v -4.9 c 0.3,0 0.5,0 0.8,0 0,1.7 0,3.3 0,4.9 z"
       id="path23"
-      inkscape:label="backlight" />
-     
-     
-     
-     
-     
-     
-     <g
-      id="g5"
-      inkscape:label="chasis"><path
-        class="st8"
+      inkscape:label="backlight"
+    />
+
+    <g id="g5" inkscape:label="chasis">
+
+      <path
+        class="st8-back"
         d="m 328.1,401.1 2.7,0.2 c -3.1,-0.2 -6.1,-0.2 -8.9,-0.2 -3.22592,2.26789 -6.2,4.3 -9.2,6.4 l -19.5,-0.3 c -1.7,-2.3 -3.4,-4.5 -5.2,-6.8 3.6,-2 7.3,-4 11,-6.1 2.6,0 5.2,0 7.8,0.1 h 4.9 c 1.7,-1.9 3.5,-3.9 5.2,-5.8 l 5.85172,0.0867 c -1.4,1.9 -2.63767,3.85665 -4.03767,5.75665 l 28.83795,0.0607 c -6.4,2.3 -12.952,4.396 -19.452,6.596 z"
         id="path9"
-        sodipodi:nodetypes="ccccccccccccccc" /><path
+        sodipodi:nodetypes="ccccccccccccccc"
+      />
+      <path
+      class="st8"
+      d="m 328.1,401.1 2.7,0.2 c -3.1,-0.2 -6.1,-0.2 -8.9,-0.2 -3.22592,2.26789 -6.2,4.3 -9.2,6.4 l -19.5,-0.3 c -1.7,-2.3 -3.4,-4.5 -5.2,-6.8 3.6,-2 7.3,-4 11,-6.1 2.6,0 5.2,0 7.8,0.1 h 4.9 c 1.7,-1.9 3.5,-3.9 5.2,-5.8 l 5.85172,0.0867 c -1.4,1.9 -2.63767,3.85665 -4.03767,5.75665 l 28.83795,0.0607 c -6.4,2.3 -12.952,4.396 -19.452,6.596 z"
+      id="path9"
+      sodipodi:nodetypes="ccccccccccccccc"
+    />
+      <path
         class="st10"
         d="m 403,400.6 h -0.8 c -1.5,0 -3.1,0 -4.7,0.1 h -1.4 c -1.4,0 -2.8,0 -4.1,0.1 -3.5,0 -7.6,0.1 -11.1,0.2 -3.6,4.8 -7.2,9.7 -10.8,14.5 h -20.7 c -2.9,-4.4 -5.8,-8.8 -8.8,-13.2 l -9.8,-0.9 v 0 l -2.76502,-0.2867 c 6.5,-2.2 13.03902,-4.4953 19.53902,-6.5953 2.6,3.9 5.226,7.882 7.826,11.782 h 10.5 c 2.4,-3.1 4.68965,-6.2 7.2,-9.4 l -4.8,-11.4 c -0.5,-1.1 -0.9,-2.3 -1.4,-3.4 -0.3,-0.7 -0.6,-1.5 -0.9,-2.2 h 0.7 0.8 c 0.2,0.1 0.4,0.3 0.5,0.4 1.1,0.8 2.2,1.6 3.2,2.4 0.5,0.4 1,0.7 1.4,1.1 0.2,0.1 0.3,0.2 0.5,0.3 l 1.2,0.9 1.5,1.2 1.5,1.2 c 1.5,1.2 3.1,2.3 4.6,3.5 0.5,0.4 1.1,0.8 1.6,1.2 0.3,0.2 0.6,0.4 0.8,0.6 1.4,1 2.7,2 4,3 3,0.4 5.9,0.8 8.9,1.2 0.1,0.1 0.2,0.1 0.3,0.2 1.70634,1.37231 3.72117,2.25516 5.5,3.5 z"
         id="path11"
-        sodipodi:nodetypes="cscsccccccccccccccccccsccccsscccccc" /><path
+        sodipodi:nodetypes="cscsccccccccccccccccccsccccsscccccc"
+      />
+      <path
         class="st20"
         d="m 402.2,400.6 v 4.9 h -17.9 c 0,0 -0.1,-0.1 -0.1,-0.2 -1.1,-1.5 -2.30597,-3 -3.30597,-4.4 3.5,0 7.70597,-0.1 11.20597,-0.2 1.3,0 2.7,0 4.1,-0.1 z"
         id="path24"
-        sodipodi:nodetypes="cccccccc" /><path
+        sodipodi:nodetypes="cccccccc"
+      />
+      <path
         class="st21"
         d="m 384.37661,405.42936 c -3.37527,5.37826 -7.10871,11.1111 -9.99403,16.41193 -9.5,0 -19.18258,-0.0413 -28.58258,-0.0413 1.2,-2.1 2.4,-4.3 3.6,-6.4 h 20.7 c 2.5,-3.4 5,-6.7 7.5,-10.1 1.1,-1.5 2.25298,-2.88234 3.35298,-4.38234 1.09197,1.53241 2.40777,2.94113 3.42363,4.5117 z"
         id="path25"
-        sodipodi:nodetypes="ccccccccc" /><path
+        sodipodi:nodetypes="ccccccccc"
+      />
+      <path
         class="st22"
         d="m 340.7,402.2 -2.1,2.7 c -0.6,0.8 -1.33004,1.6867 -2.03004,2.4867 -4.7,-0.1 -9.45666,-0.25666 -14.15666,-0.35666 -0.0732,-2.03715 -0.23392,-4.02187 -0.37832,-6.03004 2.8,0 5.86502,0 8.96502,0.2 v 0 z"
         id="path26"
-        sodipodi:nodetypes="cccccscc" /><path
+        sodipodi:nodetypes="cccccscc"
+      />
+      <path
         class="st23"
         d="m 349.4,415.4 c -1.2,2.1 -2.4,4.3 -3.6,6.4 -1.5,-2.1 -3,-4.4 -4.6,-6.8 -1.7,-2.6 -3.2,-5.2 -4.6,-7.6 0.6,-0.8 1.2,-1.6 1.9,-2.4 l 2.1,-2.7 c 0.6,0.9 1.30837,1.87833 1.90837,2.77833 2.4,3.4 4.59163,6.92167 6.89163,10.32167 z"
         id="path27"
-        sodipodi:nodetypes="cccccccc" /><path
+        sodipodi:nodetypes="cccccccc"
+      />
+      <path
         class="st24"
         d="m 322.5,407 -9.9,7.2 c 0.041,-2.07965 0.0413,-5.68576 0.0531,-6.72099 3.1,-2.1 6.43145,-4.40582 9.43145,-6.50582 0.0796,1.11499 0.25817,4.44901 0.41546,6.02681 z"
         id="path28"
-        sodipodi:nodetypes="ccccc" /><path
+        sodipodi:nodetypes="ccccc"
+      />
+      <path
         class="st25"
         d="m 312.71605,407.41112 c -0.0103,2.28501 -0.0123,4.59973 -0.11605,6.88888 -6.5,0 -12.9,0.1 -19.4,0.1 0,-2.3 -0.005,-4.90987 -0.005,-7.20987 6.4,0 12.92098,0.12097 19.52098,0.22097 z"
         id="path29"
-        sodipodi:nodetypes="cccccc" /><path
+        sodipodi:nodetypes="cccccc"
+      />
+      <path
         class="st26"
         d="m 293.21064,407.19361 c 0,2.4 -0.0255,4.84894 -0.0255,7.14894 -1.7,-2.3 -3.38511,-4.64255 -5.08511,-6.94255 v -7 c 1.7,2.4 3.41064,4.49361 5.11064,6.79361 z"
         id="path30"
-        sodipodi:nodetypes="ccccc" /><path
+        sodipodi:nodetypes="ccccc"
+      />
+      <path
         class="st18"
         d="m 373.08966,396.88827 c -2.4,3.1 -4.75586,6.22207 -7.15586,9.42207 l -10.57562,0.029 c -2.6,-3.9 -5.19059,-7.94966 -7.79059,-11.84966 0.5,-2.8 1,-5.6 1.6,-8.5 0.6,-2.9 1.7,-8.5 1.7,-8.5 l 0.0541,-0.14866 2.09186,-0.0135 c -1,5.7 -2.11351,11.68425 -3.11351,17.38425 l 0.85586,1.4338 c 1.8,2.8 3.47673,5.65713 5.27673,8.45713 l 3.035,-0.013 h 1.8 4.2 l 6.18965,-8.0669 c -1.2,-2.9 -2.44483,-5.91103 -3.7331,-8.91103 -1.27494,-2.96893 -2.5331,-5.90069 -3.7331,-8.90069 0.78827,0.38897 1.51034,0.85448 2.22138,1.21034 2.3,5.6 4.67724,11.2669 7.07724,16.9669 z"
         id="path39"
-        sodipodi:nodetypes="ccccsscccccccccscccc" /></g>
-     
-     
-     
-     
-     
-     
+        sodipodi:nodetypes="ccccsscccccccccscccc"
+      />
+    </g>
 
-     <g
-      id="g12"
-      inkscape:label="decorations"><path
+    <g id="g12" inkscape:label="decorations">
+      <path
         class="st12"
         d="m 364.9,407.6 c 1.7,0 3.3,0 5,0 0,0.3 0,0.6 0,1 -0.3,0 -0.7,0 -1,0 0,0.7 0,1.4 0,2.1 0.3,0 0.7,0 1,0 0,0.3 0,0.7 0,1 -1.7,0 -3.3,0 -5,0 0,-1.4 0,-2.8 0,-4.1 z"
-        id="path13" /><path
-        class="st13"
-        d="m 296.6,405.5 c 3.1,0 6.1,0 9.2,0"
-        id="path14" /><path
-        class="st13"
-        d="m 297.9,404.2 c 3.3,0 6.6,0 10,0"
-        id="path15" /><path
+        id="path13"
+      />
+      <path class="st13" d="m 296.6,405.5 c 3.1,0 6.1,0 9.2,0" id="path14" />
+      <path class="st13" d="m 297.9,404.2 c 3.3,0 6.6,0 10,0" id="path15" />
+      <path class="st13" d="m 297.9,403 c 3.7,0 7.3,0 11,0" id="path16" />
+      <path
         class="st28"
         d="m 298.5,396 c 0.5,1.6 1.1,3.3 1.6,4.9 4.3,0.1 8.5,0.1 12.8,0.2 5.9,-1.6 11.7,-3.2 17.6,-4.8"
-        id="path33" /><path
+        id="path33"
+      />
+      <path
         class="st29"
         d="m 343.4,399.2 c 0.8,0.9 1.7,1.7 2.5,2.6"
-        id="path34" /><path
-        class="st29"
-        d="m 345.9,398.6 c 1,1.3 2,2.6 3,3.9"
-        id="path35" /><rect
+        id="path34"
+      />
+      <path class="st29" d="m 345.9,398.6 c 1,1.3 2,2.6 3,3.9" id="path35" />
+      <rect
         x="373.70001"
         y="401.79999"
         class="st30"
         width="2.8"
         height="1.5"
-        id="rect35" /><path
+        id="rect35"
+      />
+      <path
         class="st31"
         d="m 370.6,385.1 c 1.4,3 2.8,6.1 4.2,9.1"
-        id="path36" /><path
-        class="st32"
-        d="m 375.3,388.2 c 1,1.9 2,3.9 2.9,5.8"
-        id="path37" /><path
+        id="path36"
+      />
+      <path class="st32" d="m 375.3,388.2 c 1,1.9 2,3.9 2.9,5.8" id="path37" />
+      <path
         class="st32"
         d="m 380.1,391.7 c 0.4,0.8 0.8,1.6 1.2,2.4"
-        id="path38" /><path
-        class="st13"
-        d="m 297.9,403 c 3.7,0 7.3,0 11,0"
-        id="path16" /></g>
-     <g
-      id="g8"
-      inkscape:label="cabin-lights"><rect
+        id="path38"
+      />
+    </g>
+    <g id="g8" inkscape:label="cabin-lights">
+      <!-- Apply white glow when cabinLightsOn is true -->
+      <rect
         x="347.89999"
         y="375.46484"
         class="st15"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#D5DBDB'"
         width="3"
         height="1.9"
-        id="rect17" /><rect
+        id="rect17"
+      />
+
+      <rect
         x="342.89999"
         y="375.46484"
         class="st16"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#C8D4D2'"
         width="3"
         height="1.9"
-        id="rect18" /><rect
+        id="rect18"
+      />
+
+      <rect
         x="336.89999"
         y="375.46484"
         class="st17"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#D9E3E4'"
         width="3"
         height="1.9"
-        id="rect19" /><rect
+        id="rect19"
+      />
+
+      <rect
         x="331.89999"
         y="375.46484"
         class="st17"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#D9E3E4'"
         width="3"
         height="1.9"
-        id="rect20" /><rect
+        id="rect20"
+      />
+
+      <!-- Smaller lights -->
+      <rect
         x="345.89999"
         y="375.46484"
         class="st18"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#9A929D'"
         width="1"
         height="1.9"
-        id="rect21" /><rect
+        id="rect21"
+      />
+
+      <rect
         x="339.89999"
         y="375.46484"
         class="st18"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#9A929D'"
         width="1"
         height="1.9"
-        id="rect22" /><rect
+        id="rect22"
+      />
+
+      <rect
         x="334.89999"
         y="375.46484"
         class="st18"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#9A929D'"
         width="1"
         height="1.9"
-        id="rect23" /><rect
+        id="rect23"
+      />
+
+      <rect
         x="350.89999"
         y="375.46484"
         class="st18"
+        [attr.filter]="cabinLightsOn ? 'url(#cabinLightGlow)' : null"
+        [attr.fill]="cabinLightsOn ? '#ffffff' : '#9A929D'"
         width="1"
         height="1.9"
-        id="rect38" /></g>
-     
-     
-     
-     <g
-      id="g10"
-      inkscape:label="inside"><path
+        id="rect38"
+      />
+    </g>
+
+    <g id="g10" inkscape:label="inside">
+      <path
         class="st9"
         d="m 365,398.8 c -0.7,0.7 -1.4,1.3 -2,2 0,-0.7 0,-1.4 -0.1,-2.2 -0.1,-1.7 -0.52069,-3.74552 -1.2,-6.5 -0.7,-2 -1.1,-3.1 -2.1,-3.8 -0.8,-0.6 -1.9,-1 -3,-1 h 1.6 c 0.5,0 1,0 1.4,0.1 4.1,1.1 5.3,7.5 5.4,8.2 -0.1,1.1 0,2.2 0,3.2 z"
         id="path10"
-        sodipodi:nodetypes="ccccccsccc" /><path
+        sodipodi:nodetypes="ccccccsccc"
+      />
+      <path
         class="st33"
         d="m 367.3,396.5 -2.4,2.4 v -3.2 c -0.1,-0.7 -1.3,-7.1 -5.4,-8.2 -0.98031,-0.21458 -1.99901,-0.1 -3,-0.1 -1,0 -1.9,0.2 -2.7,0.7 -1.8,1.1 -2.3,3 -2.7,4.9 -0.3,1.2 -0.4,2.4 -0.3,3.3 l -0.9,-1.5 c 1,-5.7 2.07793,-11.58828 3.07793,-17.28828 3,0 5.82345,0.1 8.72345,0.2 1.87724,6.1 3.79862,12.48828 5.59862,18.78828 z"
         id="path40"
-        sodipodi:nodetypes="ccccsccccccc" /><path
+        sodipodi:nodetypes="ccccsccccccc"
+      />
+      <path
         class="st34"
         d="m 371.3,396.6 -6.3,8.1 -5.92106,-0.11276 c 1.3,-1.3 2.4534,-2.40979 3.72106,-3.68724 0.7,-0.7 1.4,-1.3 2,-2 l 2.4,-2.4 c -1.8,-6.3 -3.6,-12.6 -5.5,-18.8 0.7,0.3 1.4,0.7 2.1,1 1.2,3 2.51035,6 3.77724,9 1.4,3 2.52276,5.9 3.72276,8.9 z"
         id="path41"
-        sodipodi:nodetypes="cccccccccc" /><path
+        sodipodi:nodetypes="cccccccccc"
+      />
+      <path
         class="st25"
         d="m 363.01035,400.77793 c -1.3,1.2 -2.61035,2.52207 -3.91035,3.82207 H 356 c -1.8,-2.8 -3.5,-5.6 -5.3,-8.4 0,-0.9 0,-2.1 0.3,-3.3 0.5,-1.9 0.9,-3.8 2.7,-4.9 0.8,-0.5 2.06483,-0.7 2.96483,-0.7 1.1,0 2.31034,0.43241 3.11034,1.13241 1,0.8 1.24552,1.64552 1.94552,3.64552 0.84083,2.79286 1.2774,5.77051 1.28966,8.7 z"
         id="path42"
-        sodipodi:nodetypes="ccccccsccc" /></g>
-     
-     
-     <g
-      id="g4"
-      inkscape:label="behind-left-wheel"><path
+        sodipodi:nodetypes="ccccccsccc"
+      />
+    </g>
+
+    <g id="g4" inkscape:label="behind-left-wheel">
+      <path
         class="st5"
         d="m 400.8,422.8 c 0,5.3 -2.7,11.6 -7.3,13.2 -1.8,0.6 -3.9,0.5 -5.3,0.5 -1.3,0 -4.1,-0.1 -6.3,-1.2 -4.3,-2 -6.6,-7.6 -6.5,-12.4 0.2,-7.9 7.2,-12.2 7.7,-12.5 1.2,-0.5 3.2,-1.1 5.8,-1.2 0.7,0 2.9,0.1 4.8,0.7 4,1.5 7,7.5 7.1,12.9 z"
-        id="path8" /><path
+        id="path8"
+      />
+      <path
         class="st7"
         d="m 399.7,423.4 c 0.1,5.8 -3.8,10.3 -8.2,10.7 -5.3,0.5 -9.3,-5.5 -9.6,-10.4 -0.3,-5.9 4.6,-12.4 9.8,-11.8 4.2,0.3 8.1,5.2 8,11.5 z"
-        id="path44" /><ellipse
+        id="path44"
+      />
+      <ellipse
         class="st35"
         cx="391.39999"
         cy="422.79999"
         rx="6.5"
         ry="8.5"
-        id="ellipse44" /></g>
-     
-     
-     <g
-      id="g1"
-      inkscape:label="front-left-wheel"><path
+        id="ellipse44"
+      />
+    </g>
+
+    <g id="g1" inkscape:label="front-left-wheel">
+      <path
         class="st5"
         d="m 341.9,422.8 c 0,5.3 -2.7,11.6 -7.3,13.2 -1.8,0.6 -3.9,0.5 -5.3,0.5 -1.3,0 -4.1,-0.1 -6.3,-1.2 -4.3,-2 -6.6,-7.6 -6.5,-12.4 0.2,-7.9 7.2,-12.2 7.7,-12.5 1.2,-0.5 3.2,-1.1 5.8,-1.2 0.7,0 2.9,0.1 4.8,0.7 4,1.5 7,7.5 7.1,12.9 z"
-        id="path45" /><path
+        id="path45"
+      />
+      <path
         class="st7"
         d="m 340.7,423.4 c 0.1,5.8 -3.8,10.3 -8.2,10.7 -5.3,0.5 -9.3,-5.5 -9.6,-10.4 -0.3,-5.9 4.6,-12.4 9.8,-11.8 4.2,0.3 8.2,5.2 8,11.5 z"
-        id="path46" /><ellipse
+        id="path46"
+      />
+      <ellipse
         class="st35"
         cx="332.5"
         cy="422.79999"
         rx="6.5"
         ry="8.5"
-        id="ellipse46" /></g>
-     
-     
-     
-     
-     
-     <g
-      id="g9"
-      inkscape:label="front-lights"><rect
+        id="ellipse46"
+      />
+    </g>
+
+    <g id="g9" inkscape:label="front-lights">
+      <rect
         x="305.10001"
         y="408.89999"
         class="st17"
+        [attr.filter]="frontLightsOn ? 'url(#strongWhiteGlow)' : null"
+        [attr.fill]="frontLightsOn ? '#ffffff' : '#D9E3E4'"
         width="6"
         height="3.9000001"
-        id="rect49" /><rect
+        id="rect49"
+      />
+
+      <rect
         x="294.89999"
         y="408.89999"
         class="st17"
+        [attr.filter]="frontLightsOn ? 'url(#strongWhiteGlow)' : null"
+        [attr.fill]="frontLightsOn ? '#ffffff' : '#D9E3E4'"
         width="6"
         height="3.9000001"
-        id="rect50" /></g>
-     
-     
-     
-     
-     
-     
-     
-     
-     <g
-      id="g7"
-      inkscape:label="barrel"><path
+        id="rect50"
+      />
+    </g>
+
+    <g id="g7" inkscape:label="barrel">
+      <path
         class="st3"
         d="m 361.7,367.8 v 0 c 0,0.2 -0.1,0.4 -0.2,0.6 l -32.1,-1.8 V 366 Z"
-        id="path3" /><circle
+        id="path3"
+      />
+      <circle
         class="st4"
         cx="329.5"
         cy="366.29999"
         r="0.30000001"
-        id="circle3" /><path
+        id="circle3"
+      />
+      <path
         class="st37"
         d="m 361.6,366.4 -30.8,-1.7 v -0.6 l 30.5,1.7 c 0.1,0.2 0.2,0.4 0.3,0.6 z"
-        id="path49" /><path
+        id="path49"
+      />
+      <path
         class="st39"
         d="m 361.8,367.3 -32.2,-1.7 V 365 l 32.1,1.7 c 0,0.2 0.1,0.4 0.1,0.6 z"
-        id="path50" /><path
+        id="path50"
+      />
+      <path
         class="st40"
         d="m 361.7,367.8 c 0,0.2 -0.1,0.4 -0.2,0.6 0,0 0,0 0,0 l -29.6,-1.7 v -0.6 z"
-        id="path51" /><path
+        id="path51"
+      />
+      <path
         class="st41"
         d="m 361.4,368.9 c -0.1,0.2 -0.2,0.4 -0.4,0.6 l -30.2,-1.7 v -0.6 z"
-        id="path52" /><circle
+        id="path52"
+      />
+      <circle
         class="st4"
         cx="330.70001"
         cy="364.39999"
         r="0.30000001"
-        id="circle52" /><circle
+        id="circle52"
+      />
+      <circle
         class="st4"
         cx="329.60001"
         cy="365.29999"
         r="0.30000001"
-        id="circle53" /><circle
+        id="circle53"
+      />
+      <circle
         class="st4"
         cx="331.91818"
         cy="366.41818"
         r="0.30000001"
-        id="circle54" /><circle
+        id="circle54"
+      />
+      <circle
         class="st4"
         cx="330.70001"
         cy="367.5"
         r="0.30000001"
-        id="circle55" /><path
+        id="circle55"
+      />
+      <path
         class="st40"
         d="m 361.8,367.3 -29.7,-1.7 V 365 l 29.6,1.7 c 0,0 0,0 0,0 0,0.2 0.1,0.4 0.1,0.6 z"
-        id="path55" /><circle
+        id="path55"
+      />
+      <circle
         class="st4"
         cx="332"
         cy="365.29999"
         r="0.30000001"
-        id="circle56" /></g>
-     
-     
-     
-     
-     <g
-      id="g6"
-      inkscape:label="turret"><path
+        id="circle56"
+      />
+    </g>
+
+    <g id="g6" inkscape:label="turret">
+      <path
         class="st1"
         d="m 367.9,356.6 c -3.1,6 -6.2,12.1 -9.3,18.1 -1.2,0 -2.5,0 -3.7,0 1.5,-3.2 3,-6.4 4.5,-9.7 2.2,-2.8 4.4,-5.6 6.5,-8.3 0.7,-0.1 1.3,-0.1 2,-0.1 z"
-        id="path1" /><path
+        id="path1"
+      />
+      <path
         class="st2"
         d="m 375.6,369.9 c -0.3,1 -1,1.6 -1.1,1.7 0,0 -0.1,0 -0.2,0 -0.1,0 -0.2,0 -0.2,0 -0.3,0 -0.6,0 -0.9,-0.1 -0.3,0 -0.7,0 -1,-0.1 -0.7,0 -1.3,-0.1 -2,-0.2 -0.3,0 -0.6,0 -0.9,-0.1 -0.1,0 -0.1,0 -0.2,0 -2.4,-0.2 -4.8,-0.4 -7.2,-0.6 1.6,-0.7 2.4,-2.3 2,-3.7 -0.4,-1.5 -2,-2 -2.1,-2 3.3,0.2 6.7,0.4 10,0.5 v 0 c 0.7,0 1.4,0.1 2.1,0.1 0.2,0.1 1.5,0.9 1.8,2.5 v 0 c 0.2,0.8 0.1,1.5 -0.1,2 z"
-        id="path2" /><path
+        id="path2"
+      />
+      <path
         class="st1"
         d="m 374.7,367.8 c -0.2,0.3 -0.5,0.6 -0.7,1 -0.3,0.4 -0.6,0.8 -0.9,1.2 -0.3,0.4 -0.6,0.8 -0.9,1.2 v 0 c -0.1,0.1 -0.2,0.2 -0.3,0.4 v 0 c 0,0.1 -0.1,0.1 -0.1,0.2 -0.2,0.2 -0.3,0.4 -0.5,0.6 -0.1,0.1 -0.1,0.2 -0.2,0.3 -0.3,0.4 -0.6,0.8 -0.9,1.2 -0.3,0.4 -0.6,0.8 -0.9,1.2 -0.2,0.3 -0.5,0.6 -0.7,0.9 h -0.1 c -2.2,-0.1 -4.3,-0.1 -6.5,-0.2 3.1,-6.3 6.2,-12.6 9.3,-18.9 0.8,0 1.7,0 2.5,0 0.3,3.5 0.6,7.2 0.9,10.9 z"
-        id="path31" /><path
+        id="path31"
+      />
+      <path
         class="st27"
         d="m 364,367.4 v 0 c 0,0.2 0,0.4 0,0.5 0,0 0,0 0,0 0,0.2 -0.1,0.4 -0.1,0.6 0,0 0,0 0,0 0,0.1 -0.1,0.3 -0.2,0.4 -0.1,0.2 -0.2,0.4 -0.4,0.6 -0.3,0.4 -0.8,0.8 -1.3,1 l -2.3,-0.2 c 0.5,-0.2 1,-0.5 1.3,-0.9 0.2,-0.2 0.3,-0.4 0.4,-0.6 0.1,-0.1 0.2,-0.3 0.2,-0.4 0,0 0,0 0,0 0.1,-0.2 0.1,-0.4 0.2,-0.6 v 0 c 0,-0.2 0,-0.3 0,-0.5 0,0 0,0 0,0 0,-0.2 0,-0.4 -0.1,-0.6 0,0 0,0 0,0 0,-0.1 0,-0.1 -0.1,-0.2 -0.1,-0.2 -0.2,-0.5 -0.3,-0.6 -0.6,-0.8 -1.6,-1.2 -1.7,-1.2 0.8,0.1 1.5,0.1 2.3,0.2 0.1,0 1,0.3 1.7,1.1 0.2,0.2 0.3,0.4 0.4,0.6 0,0.1 0.1,0.1 0.1,0.2 0,0 0,0 0,0 0,0 0,0 0,0.1 -0.1,0.1 -0.1,0.3 -0.1,0.5 z"
-        id="path32" /><path
+        id="path32"
+      />
+      <path
         class="st36"
         d="m 385,372.7 h 0.9 v 0.9 H 383 v -6.9 c 1,0 2,0.1 2.9,0.1 0,0.3 0,0.5 0.1,0.8 h -1 z"
-        id="path48" /><path
+        id="path48"
+      />
+      <path
         class="st42"
         d="m 397.55032,392.62484 v 4.5 c -0.1,-0.1 -0.2,-0.1 -0.3,-0.2 -3,-0.4 -5.9,-0.8 -8.9,-1.2 -1.3,-1 -2.7,-2 -4,-3 h 13.2 z"
-        id="path56" /><path
+        id="path56"
+      />
+      <path
         class="st43"
         d="m 383,368.6 v 2 l -7.4,-0.6 c 0.2,-0.5 0.3,-1.2 0.2,-2 z"
-        id="path57" /><path
+        id="path57"
+      />
+      <path
         class="st37"
         d="m 373.2,371.5 c 0,2.3 0,4.6 0,6.8 h -3 c 0,-1.6 0,-3.2 0,-4.7 0.6,-0.7 1.1,-1.5 1.7,-2.2 0.1,0 0.2,0 0.3,0 0.4,0 0.7,0.1 1,0.1 z"
-        id="path58" /><path
+        id="path58"
+      />
+      <path
         class="st42"
         d="m 381.91274,391.07452 c -3.22197,-2.36278 -7.69787,-6.19575 -9.1035,-7.14044 L 369.2,378.4 h 4.8 z"
         id="path59"
-        sodipodi:nodetypes="ccccc" /><path
+        sodipodi:nodetypes="ccccc"
+      />
+      <path
         class="st42"
         d="m 374.1,378.3 -2.95605,4.40924 c -1.1,-0.8 -2.2,-1.6 -3.2,-2.4 L 369.3,378.4 h 4.8 z"
         id="path60"
-        sodipodi:nodetypes="cccccc" /></g>
-     
-     <path
-      class="st44"
-      d="m 323.2,394.3 c 7.6,0 15.2,0 22.9,0"
-      id="path61"
-      inkscape:label="swippers" />
-   </g>
-   </svg>
+        sodipodi:nodetypes="cccccc"
+      />
+    </g>
+
+    <path
+    class="st44 wiper-animation"
+    [class.wiper-paused]="!wipersOn"
+    d="m 323.2,394.3 c 7.6,0 15.2,0 22.9,0"
+    id="path61"
+    inkscape:label="swippers"
+  />
+  </g>
+</svg>
