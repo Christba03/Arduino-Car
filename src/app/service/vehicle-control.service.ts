@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, interval, Subscription, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 export type WeatherType = 'soleado' | 'nublado' | 'lluvia' | 'nevado';
@@ -20,6 +20,10 @@ interface ApiState {
 })
 export class VehicleControlService {
   private apiUrl = 'http://localhost:3001/arduino/vehicle-state';
+
+  private pollingInterval = 5000; // 5 seconds
+  private pollingSubscription!: Subscription;
+
   
   // BehaviorSubjects for all controls
   private dayNightModeSubject = new BehaviorSubject<boolean>(false);
@@ -45,6 +49,43 @@ export class VehicleControlService {
 
   constructor(private http: HttpClient) {
     this.loadInitialState();
+    this.startPolling();
+  }
+
+  startPolling(): void {
+    this.pollingSubscription = interval(this.pollingInterval).pipe(
+      // Use switchMap to cancel previous requests if new one comes in
+      switchMap(() => this.http.get<ApiState>(this.apiUrl))
+    ).subscribe({
+      next: (state) => {
+        console.log('Polling update received:', state);
+        this.updateLocalState(state);
+      },
+      error: (err) => console.error('Polling error:', err)
+    });
+  }
+
+  stopPolling(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
+  }
+
+  private updateLocalState(state: ApiState): void {
+    if (!state) return;
+    
+    // Only update if values are different to avoid unnecessary change detection
+    if (state.dayNightMode !== this.dayNightModeSubject.value) {
+      this.dayNightModeSubject.next(state.dayNightMode);
+    }
+    if (state.headlights !== this.headlightsSubject.value) {
+      this.headlightsSubject.next(state.headlights);
+    }
+    // Update other subjects as needed...
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
   }
 
   // ========== GETTER METHODS ==========
