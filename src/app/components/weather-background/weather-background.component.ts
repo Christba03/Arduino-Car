@@ -13,7 +13,15 @@ type WeatherType = 'soleado' | 'nublado' | 'lluvia' | 'nevado';
 export class WeatherBackgroundComponent {
   @Input() weather: WeatherType = 'soleado';
   
-  // Generate lots of snowflakes (adjust count as needed)
-  snowflakes = Array(6).fill(0);
-
+  raindrops = Array(40).fill(0); 
+  snowflakes = Array(12).fill(0);
+  
+  getRainStyle(index: number) {
+    return {
+      left: `${5 + (index % 18) * 5}%`, 
+      animationDelay: `${Math.random() * 0.5}s`,
+      animationDuration: `${0.8 + Math.random() * 0.4}s`,
+      height: `${8 + Math.random() * 8}px`, 
+    };
+  }
 }

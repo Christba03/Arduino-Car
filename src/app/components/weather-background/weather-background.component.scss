@@ -1,3 +1,13 @@
+:host {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; // Crucial for containing effects
+}
+
 .weather-background {
   position: absolute;
   top: 0;
@@ -91,13 +101,42 @@
     }
   }
 
-  /* Other weather states */
   &.nublado {
     background: linear-gradient(to top right, rgba(63,81,181,1) 0%, rgba(3,155,229,1) 40%);
   }
 
   &.lluvia {
-    background: linear-gradient(to top right, rgba(117,117,117,1) 0%, rgba(33,33,33,1) 90%);
+    background: linear-gradient(to top right, #757575 0%, #212121 90%);
+    
+    .rain {
+      position: absolute;
+      width: 50%;
+      height: 60%;
+      pointer-events: none;
+      
+
+    }
+    
+    .drop {
+      position: absolute;
+      width: 2px;
+      height: 15px;
+      background: linear-gradient(to bottom, transparent, rgba(174, 194, 224, 0.6));
+      border-radius: 0 0 5px 5px;
+      animation: rain linear infinite;
+      transform-origin: bottom;
+      
+      /* Create staggered rain effect */
+      @for $i from 1 through 100 {
+        &:nth-child(#{$i}) {
+          left: random(20) ;
+          animation-delay: random(2000) + ms;
+          animation-duration: 500 + random(1000) + ms;
+          height: 10 + random(15) + px;
+          opacity: 0.2 + random(8) / 10;
+        }
+      }
+    }
   }
 
   &.noche {
@@ -128,6 +167,22 @@
     }
     100% {
       transform: scale(1.4);
+      opacity: 0;
+    }
+  }
+  @keyframes rain {
+    0% {
+      transform: translateY(-100%) translateX(0) rotate(15deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(100vh) translateX(20px) rotate(15deg);
       opacity: 0;
     }
   }

@@ -24,18 +24,20 @@ ion-footer {
     }
   }
   
-  /* For larger screens */
-  @media (min-width: 768px) {
-    ion-footer {
-      ion-toolbar {
-        ion-segment {
-          ion-segment-button {
-            ion-label {
-              font-size: 1rem;
-              padding: 0 12px;
-            }
-          }
-        }
-      }
+  @keyframes rain {
+    0% {
+      transform: translateY(-10vh) translateX(0) rotate(10deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(110vh) translateX(5px) rotate(10deg);
+      opacity: 0;
     }
   }
+  
