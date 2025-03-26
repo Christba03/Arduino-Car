@@ -1,14 +1,27 @@
-// services/vehicle-control.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 export type WeatherType = 'soleado' | 'nublado' | 'lluvia' | 'nevado';
+
+interface ApiState {
+  dayNightMode: boolean;
+  headlights: boolean;
+  insideLights: boolean;
+  cleanersActive: boolean;
+  honkHorn: boolean;
+  doorsLocked: boolean;
+  musicPlaying: boolean;
+  weather: WeatherType;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehicleControlService {
-  // Subjects for all controls
+  private apiUrl = 'http://localhost:3001/arduino/vehicle-state';
+  
+  // BehaviorSubjects for all controls
   private dayNightModeSubject = new BehaviorSubject<boolean>(false);
   private headlightsSubject = new BehaviorSubject<boolean>(false);
   private backlightsSubject = new BehaviorSubject<boolean>(false);
@@ -19,7 +32,7 @@ export class VehicleControlService {
   private weatherSubject = new BehaviorSubject<WeatherType>('soleado');
   private honkHornSubject = new BehaviorSubject<void>(undefined);
 
-  // Expose observables
+  // Exposed observables
   dayNightMode$ = this.dayNightModeSubject.asObservable().pipe(distinctUntilChanged());
   headlightsOn$ = this.headlightsSubject.asObservable().pipe(distinctUntilChanged());
   backlightsOn$ = this.backlightsSubject.asObservable().pipe(distinctUntilChanged());
@@ -30,7 +43,11 @@ export class VehicleControlService {
   weather$ = this.weatherSubject.asObservable().pipe(distinctUntilChanged());
   honkHorn$ = this.honkHornSubject.asObservable();
 
-  // Get current values
+  constructor(private http: HttpClient) {
+    this.loadInitialState();
+  }
+
+  // ========== GETTER METHODS ==========
   getDayNightMode(): boolean {
     return this.dayNightModeSubject.value;
   }
@@ -63,46 +80,86 @@ export class VehicleControlService {
     return this.weatherSubject.value;
   }
 
-  // Update methods with automatic behaviors
-  setDayNightMode(state: boolean) {
+  // ========== SETTER METHODS ==========
+  setDayNightMode(state: boolean): void {
     this.dayNightModeSubject.next(state);
+    this.updateBackend({ dayNightMode: state });
     this.updateLightingBasedOnConditions();
   }
 
-  setHeadlights(state: boolean) {
+  setHeadlights(state: boolean): void {
     this.headlightsSubject.next(state);
+    this.updateBackend({ headlights: state });
   }
 
-  setBacklights(state: boolean) {
+  setBacklights(state: boolean): void {
     this.backlightsSubject.next(state);
+    // Not in API, so no backend update
   }
 
-  setDoorsLocked(state: boolean) {
+  setDoorsLocked(state: boolean): void {
     this.doorsLockedSubject.next(state);
+    // Not in API, so no backend update
   }
 
-  setCleanersActive(state: boolean) {
+  setCleanersActive(state: boolean): void {
     this.cleanersActiveSubject.next(state);
+    this.updateBackend({ cleanersActive: state });
   }
 
-  setInsideLights(state: boolean) {
+  setInsideLights(state: boolean): void {
     this.insideLightsSubject.next(state);
+    this.updateBackend({ insideLights: state });
   }
 
-  setMusicPlaying(state: boolean) {
+  setMusicPlaying(state: boolean): void {
     this.musicPlayingSubject.next(state);
+    // Not in API, so no backend update
   }
 
-  setWeather(weather: WeatherType) {
+  setWeather(weather: WeatherType): void {
     this.weatherSubject.next(weather);
     this.updateLightingBasedOnConditions();
+    // Not in API, so no backend update
   }
 
-  honkHorn() {
+  honkHorn(): void {
     this.honkHornSubject.next();
+    this.updateBackend({ honkHorn: true });
+    setTimeout(() => {
+      this.updateBackend({ honkHorn: false });
+    }, 500);
   }
 
-  private updateLightingBasedOnConditions() {
+  // ========== PRIVATE METHODS ==========
+  private loadInitialState(): void {
+    this.http.get<ApiState>(this.apiUrl).subscribe({
+      next: (state) => {
+        if (state) {
+          console.log('Initial state loaded:', state);
+          this.dayNightModeSubject.next(state.dayNightMode);
+          this.headlightsSubject.next(state.headlights);
+          this.insideLightsSubject.next(state.insideLights);
+          this.cleanersActiveSubject.next(state.cleanersActive);
+        }
+      },
+      error: (err) => console.error('Error loading initial state:', err)
+    });
+  }
+
+  private updateBackend(data: Partial<ApiState>): void {
+    console.log('Updating backend with:', data);
+    this.http.put(this.apiUrl, data, { observe: 'response' }).subscribe({
+      next: (response) => {
+        console.log('Update successful:', response.status);
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+      }
+    });
+  }
+
+  private updateLightingBasedOnConditions(): void {
     const isNight = this.getDayNightMode();
     const currentWeather = this.getCurrentWeather();
 
@@ -147,7 +204,7 @@ export class VehicleControlService {
       case 'nevado': // Snowy
         this.setHeadlights(true);
         this.setBacklights(true);
-        this.setInsideLights(true); // Extra visibility in snow
+        this.setInsideLights(true);
         this.setCleanersActive(true);
         break;
     }

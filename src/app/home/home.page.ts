@@ -16,6 +16,7 @@ import { VehicleControlService } from '../service/vehicle-control.service';
 import { GrayscaleFilterComponent } from '../components/grayscale-filter/grayscale-filter.component';
 import { AsyncPipe, NgIf } from '@angular/common'; // Added NgIf
 import { startWith } from 'rxjs/operators';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -34,7 +35,8 @@ import { startWith } from 'rxjs/operators';
     ControlPanelComponent,
     GrayscaleFilterComponent,
     AsyncPipe,
-    NgIf 
+    NgIf,
+    HttpClientModule
   ]
 })
 export class HomePage {
