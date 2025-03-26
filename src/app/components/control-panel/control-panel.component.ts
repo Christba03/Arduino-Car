@@ -1,29 +1,75 @@
-import { Component, OnInit } from '@angular/core';
+// control-panel.component.ts
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { CustomToggleComponent } from "../custom-toggle/custom-toggle.component";
-import { FormsModule } from '@angular/forms'; // Add this import
-import { CommonModule } from '@angular/common'; // Recommended for standalone components
+import { VehicleControlService } from 'src/app/service/vehicle-control.service';
 
 @Component({
   selector: 'app-control-panel',
   templateUrl: './control-panel.component.html',
   styleUrls: ['./control-panel.component.scss'],
-  standalone:true,
+  standalone: true,
   imports: [    
     CommonModule,
-    FormsModule, // Add this to enable ngModel
-    CustomToggleComponent]
+    FormsModule,
+    CustomToggleComponent
+  ]
 })
-export class ControlPanelComponent{
-  // Toggle states
-  dayNightMode: boolean = false;
-  headlightsOn: boolean = false;
-  backlightsOn: boolean = false;
-  doorsLocked: boolean = true;
-  cleanersActive: boolean = false;
-  insideLightsOn: boolean = false;
-  musicPlaying: boolean = false;
+export class ControlPanelComponent {
+  constructor(private vehicleControl: VehicleControlService) {}
 
-  // Add any specific toggle handlers if needed
+  // Bind these directly to your template
+  get dayNightMode(): boolean {
+    return this.vehicleControl.getDayNightMode();
+  }
+  set dayNightMode(state: boolean) {
+    this.vehicleControl.setDayNightMode(state);
+  }
+
+  get headlightsOn(): boolean {
+    return this.vehicleControl.getHeadlightsState();
+  }
+  set headlightsOn(state: boolean) {
+    this.vehicleControl.setHeadlights(state);
+  }
+
+  get backlightsOn(): boolean {
+    return this.vehicleControl.getBacklightsState();
+  }
+  set backlightsOn(state: boolean) {
+    this.vehicleControl.setBacklights(state);
+  }
+
+  get doorsLocked(): boolean {
+    return this.vehicleControl.getDoorsLockedState();
+  }
+  set doorsLocked(state: boolean) {
+    this.vehicleControl.setDoorsLocked(state);
+  }
+
+  get cleanersActive(): boolean {
+    return this.vehicleControl.getCleanersActiveState();
+  }
+  set cleanersActive(state: boolean) {
+    this.vehicleControl.setCleanersActive(state);
+  }
+
+  get insideLightsOn(): boolean {
+    return this.vehicleControl.getInsideLightsState();
+  }
+  set insideLightsOn(state: boolean) {
+    this.vehicleControl.setInsideLights(state);
+  }
+
+  get musicPlaying(): boolean {
+    return this.vehicleControl.getMusicPlayingState();
+  }
+  set musicPlaying(state: boolean) {
+    this.vehicleControl.setMusicPlaying(state);
+    this.onMusicToggle(state);
+  }
+
   onMusicToggle(state: boolean) {
     console.log('Music state changed:', state);
     // Add your music control logic here

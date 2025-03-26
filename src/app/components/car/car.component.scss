@@ -214,3 +214,33 @@
   .wiper-paused {
     animation-play-state: paused;
   }
+  .rotate-animation {
+    transform-origin: 328.1px 401.1px; /* Rotation point */
+    animation: rotateOnce 2s forwards;
+    animation-play-state: paused;
+  }
+  
+  .chasis-open {
+    transform-origin: 328.1px 401.1px;
+    transform: rotate(55deg);
+    opacity: 1;
+    transition: transform 1s ease, opacity 0.5s ease;
+  }
+  
+  .chasis-closed {
+    transform-origin: 328.1px 401.1px;
+    transform: rotate(0deg);
+    opacity: 1;
+    transition: transform 1s ease, opacity 0.5s ease;
+  }
+  
+  /* Hidden elements */
+  .hidden-elements {
+    opacity: 0;
+    transition: opacity 0.3s ease 0.5s; /* Delay to match rotation */
+  }
+  
+  .visible-elements {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
