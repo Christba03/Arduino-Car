@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, interval, Subscription, switchMap } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, distinctUntilChanged, interval, Subscription, switchMap, filter } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 export type WeatherType = 'soleado' | 'nublado' | 'lluvia' | 'nevado';
@@ -8,9 +8,10 @@ interface ApiState {
   dayNightMode: boolean;
   headlights: boolean;
   insideLights: boolean;
+  backlights: boolean; 
   cleanersActive: boolean;
   honkHorn: boolean;
-  doorsLocked: boolean;
+  doorsLocked: boolean; 
   musicPlaying: boolean;
   weather: WeatherType;
 }
@@ -18,13 +19,14 @@ interface ApiState {
 @Injectable({
   providedIn: 'root'
 })
-export class VehicleControlService {
+export class VehicleControlService implements OnDestroy {
   private apiUrl = 'http://localhost:3001/arduino/vehicle-state';
-
   private pollingInterval = 5000; // 5 seconds
   private pollingSubscription!: Subscription;
+  private updateQueue: Partial<ApiState> = {};
+  private updateTimeout: any;
+  private isUpdating = false;
 
-  
   // BehaviorSubjects for all controls
   private dayNightModeSubject = new BehaviorSubject<boolean>(false);
   private headlightsSubject = new BehaviorSubject<boolean>(false);
@@ -54,12 +56,12 @@ export class VehicleControlService {
 
   startPolling(): void {
     this.pollingSubscription = interval(this.pollingInterval).pipe(
-      // Use switchMap to cancel previous requests if new one comes in
-      switchMap(() => this.http.get<ApiState>(this.apiUrl))
+      switchMap(() => this.http.get<ApiState>(this.apiUrl)),
+      filter(() => !this.isUpdating)
     ).subscribe({
       next: (state) => {
         console.log('Polling update received:', state);
-        this.updateLocalState(state);
+        this.updateLocalState(state, true);
       },
       error: (err) => console.error('Polling error:', err)
     });
@@ -71,21 +73,65 @@ export class VehicleControlService {
     }
   }
 
-  private updateLocalState(state: ApiState): void {
+  private updateLocalState(state: ApiState, fromPolling: boolean = false): void {
     if (!state) return;
     
-    // Only update if values are different to avoid unnecessary change detection
     if (state.dayNightMode !== this.dayNightModeSubject.value) {
       this.dayNightModeSubject.next(state.dayNightMode);
+      if (!fromPolling) this.queueUpdate({ dayNightMode: state.dayNightMode });
     }
     if (state.headlights !== this.headlightsSubject.value) {
       this.headlightsSubject.next(state.headlights);
+      if (!fromPolling) this.queueUpdate({ headlights: state.headlights });
     }
-    // Update other subjects as needed...
+    if (state.insideLights !== this.insideLightsSubject.value) {
+      this.insideLightsSubject.next(state.insideLights);
+      if (!fromPolling) this.queueUpdate({ insideLights: state.insideLights });
+    }
+    if (state.backlights !== this.backlightsSubject.value) {
+      this.backlightsSubject.next(state.backlights);
+      if (!fromPolling) this.queueUpdate({ backlights: state.backlights });
+    }
+    if (state.cleanersActive !== this.cleanersActiveSubject.value) {
+      this.cleanersActiveSubject.next(state.cleanersActive);
+      if (!fromPolling) this.queueUpdate({ cleanersActive: state.cleanersActive });
+    }
+    if (state.doorsLocked !== this.doorsLockedSubject.value) {
+      this.doorsLockedSubject.next(state.doorsLocked);
+      if (!fromPolling) this.queueUpdate({ doorsLocked: state.doorsLocked });
+    }
   }
 
-  ngOnDestroy(): void {
-    this.stopPolling();
+  private queueUpdate(update: Partial<ApiState>): void {
+    this.updateQueue = { ...this.updateQueue, ...update };
+    
+    if (this.updateTimeout) {
+      clearTimeout(this.updateTimeout);
+    }
+    
+    this.updateTimeout = setTimeout(() => {
+      this.sendQueuedUpdates();
+    }, 300);
+  }
+
+  private sendQueuedUpdates(): void {
+    if (Object.keys(this.updateQueue).length === 0) return;
+    
+    this.isUpdating = true;
+    const updatesToSend = { ...this.updateQueue };
+    this.updateQueue = {};
+    
+    console.log('Sending queued updates:', updatesToSend);
+    this.http.put(this.apiUrl, updatesToSend, { observe: 'response' }).subscribe({
+      next: (response) => {
+        console.log('Update successful:', response.status);
+        this.isUpdating = false;
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+        this.isUpdating = false;
+      }
+    });
   }
 
   // ========== GETTER METHODS ==========
@@ -123,53 +169,73 @@ export class VehicleControlService {
 
   // ========== SETTER METHODS ==========
   setDayNightMode(state: boolean): void {
-    this.dayNightModeSubject.next(state);
-    this.updateBackend({ dayNightMode: state });
-    this.updateLightingBasedOnConditions();
+    if (this.dayNightModeSubject.value !== state) {
+      this.dayNightModeSubject.next(state);
+      this.queueUpdate({ dayNightMode: state });
+      this.updateLightingBasedOnConditions();
+    }
   }
 
   setHeadlights(state: boolean): void {
-    this.headlightsSubject.next(state);
-    this.updateBackend({ headlights: state });
+    if (this.headlightsSubject.value !== state) {
+      this.headlightsSubject.next(state);
+      this.queueUpdate({ headlights: state });
+    }
   }
 
   setBacklights(state: boolean): void {
-    this.backlightsSubject.next(state);
-    // Not in API, so no backend update
+    if (this.backlightsSubject.value !== state) {
+      this.backlightsSubject.next(state);
+      this.queueUpdate({ backlights: state });
+    }
   }
 
   setDoorsLocked(state: boolean): void {
-    this.doorsLockedSubject.next(state);
-    // Not in API, so no backend update
+    if (this.doorsLockedSubject.value !== state) {
+      this.doorsLockedSubject.next(state);
+      this.queueUpdate({ doorsLocked: state });
+    }
   }
 
   setCleanersActive(state: boolean): void {
-    this.cleanersActiveSubject.next(state);
-    this.updateBackend({ cleanersActive: state });
+    if (this.cleanersActiveSubject.value !== state) {
+      this.cleanersActiveSubject.next(state);
+      this.queueUpdate({ cleanersActive: state });
+    }
   }
 
   setInsideLights(state: boolean): void {
-    this.insideLightsSubject.next(state);
-    this.updateBackend({ insideLights: state });
+    if (this.insideLightsSubject.value !== state) {
+      this.insideLightsSubject.next(state);
+      this.queueUpdate({ insideLights: state });
+    }
   }
 
   setMusicPlaying(state: boolean): void {
-    this.musicPlayingSubject.next(state);
-    // Not in API, so no backend update
+    if (this.musicPlayingSubject.value !== state) {
+      this.musicPlayingSubject.next(state);
+    }
   }
 
   setWeather(weather: WeatherType): void {
-    this.weatherSubject.next(weather);
-    this.updateLightingBasedOnConditions();
-    // Not in API, so no backend update
+    if (this.weatherSubject.value !== weather) {
+      this.weatherSubject.next(weather);
+      this.updateLightingBasedOnConditions();
+    }
   }
 
   honkHorn(): void {
     this.honkHornSubject.next();
-    this.updateBackend({ honkHorn: true });
+    this.queueUpdate({ honkHorn: true });
     setTimeout(() => {
-      this.updateBackend({ honkHorn: false });
+      this.queueUpdate({ honkHorn: false });
     }, 500);
+  }
+
+  flushUpdates(): void {
+    if (Object.keys(this.updateQueue).length > 0) {
+      this.sendQueuedUpdates();
+    }
   }
 
   // ========== PRIVATE METHODS ==========
@@ -178,25 +244,10 @@ export class VehicleControlService {
       next: (state) => {
         if (state) {
           console.log('Initial state loaded:', state);
-          this.dayNightModeSubject.next(state.dayNightMode);
-          this.headlightsSubject.next(state.headlights);
-          this.insideLightsSubject.next(state.insideLights);
-          this.cleanersActiveSubject.next(state.cleanersActive);
+          this.updateLocalState(state, true);
         }
       },
       error: (err) => console.error('Error loading initial state:', err)
-    });
-  }
-
-  private updateBackend(data: Partial<ApiState>): void {
-    console.log('Updating backend with:', data);
-    this.http.put(this.apiUrl, data, { observe: 'response' }).subscribe({
-      next: (response) => {
-        console.log('Update successful:', response.status);
-      },
-      error: (err) => {
-        console.error('Update failed:', err);
-      }
     });
   }
 
@@ -204,13 +255,11 @@ export class VehicleControlService {
     const isNight = this.getDayNightMode();
     const currentWeather = this.getCurrentWeather();
 
-    // Night mode overrides everything - all lights on
     if (isNight) {
       this.setHeadlights(true);
       this.setBacklights(true);
       this.setInsideLights(true);
       
-      // Keep wipers on if it's raining or snowing at night
       if (currentWeather === 'lluvia' || currentWeather === 'nevado') {
         this.setCleanersActive(true);
       } else {
@@ -219,35 +268,42 @@ export class VehicleControlService {
       return;
     }
 
-    // Day mode behaviors based on weather
     switch(currentWeather) {
-      case 'soleado': // Sunny
+      case 'soleado':
         this.setHeadlights(false);
         this.setBacklights(false);
         this.setInsideLights(false);
         this.setCleanersActive(false);
         break;
         
-      case 'nublado': // Cloudy
+      case 'nublado':
         this.setHeadlights(true);
         this.setBacklights(true);
         this.setInsideLights(false);
         this.setCleanersActive(false);
         break;
         
-      case 'lluvia': // Rainy
+      case 'lluvia':
         this.setHeadlights(true);
         this.setBacklights(true);
         this.setInsideLights(false);
         this.setCleanersActive(true);
         break;
         
-      case 'nevado': // Snowy
+      case 'nevado':
         this.setHeadlights(true);
         this.setBacklights(true);
         this.setInsideLights(true);
         this.setCleanersActive(true);
         break;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+    if (this.updateTimeout) {
+      clearTimeout(this.updateTimeout);
+    }
+    this.flushUpdates();
   }
 }
