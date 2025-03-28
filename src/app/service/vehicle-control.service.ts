@@ -21,7 +21,7 @@ interface ApiState {
 })
 export class VehicleControlService implements OnDestroy {
   private apiUrl = 'http://localhost:3001/arduino/vehicle-state';
-  private pollingInterval = 3000; // 5 seconds
+  private pollingInterval = 1000; // 5 seconds
   private pollingSubscription!: Subscription;
   private updateQueue: Partial<ApiState> = {};
   private updateTimeout: any;
@@ -125,6 +125,7 @@ export class VehicleControlService implements OnDestroy {
       this.dayNightModeSubject.next(state.dayNightMode);
       if (!fromPolling) this.queueUpdate({ dayNightMode: state.dayNightMode });
     }
+    this.updateLightingBasedOnConditions();
     if (state.headlights !== this.headlightsSubject.value) {
       this.headlightsSubject.next(state.headlights);
       if (!fromPolling) this.queueUpdate({ headlights: state.headlights });
@@ -226,9 +227,13 @@ export class VehicleControlService implements OnDestroy {
 
   // ========== SETTER METHODS ==========
   setDayNightMode(state: boolean): void {
+    console.log('Setting day/night mode to:', state);
+    
     if (this.dayNightModeSubject.value !== state) {
       this.dayNightModeSubject.next(state);
       this.queueUpdate({ dayNightMode: state });
+      
+      console.log('Calling updateLightingBasedOnConditions from setDayNightMode');
       this.updateLightingBasedOnConditions();
     }
   }
@@ -314,20 +319,25 @@ export class VehicleControlService implements OnDestroy {
   private updateLightingBasedOnConditions(): void {
     const isNight = this.getDayNightMode();
     const currentWeather = this.getCurrentWeather();
-
+    
+    console.log('Updating lighting based on conditions:', 
+      { isNight, currentWeather });
+  
     if (isNight) {
+      // At night, always turn on these lights
       this.setHeadlights(true);
       this.setBacklights(true);
       this.setInsideLights(true);
       
-      if (currentWeather === 'lluvia' || currentWeather === 'nevado') {
-        this.setCleanersActive(true);
-      } else {
-        this.setCleanersActive(false);
+      // Only enable cleaners if it's raining or snowing
+      const shouldCleanersBeActive = currentWeather === 'lluvia' || currentWeather === 'nevado';
+      if (this.getCleanersActiveState() !== shouldCleanersBeActive) {
+        this.setCleanersActive(shouldCleanersBeActive);
       }
       return;
     }
-
+  
+    // Day conditions
     switch(currentWeather) {
       case 'soleado':
         this.setHeadlights(false);
