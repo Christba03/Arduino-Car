@@ -21,11 +21,17 @@ interface ApiState {
 })
 export class VehicleControlService implements OnDestroy {
   private apiUrl = 'http://localhost:3001/arduino/vehicle-state';
-  private pollingInterval = 5000; // 5 seconds
+  private pollingInterval = 3000; // 5 seconds
   private pollingSubscription!: Subscription;
   private updateQueue: Partial<ApiState> = {};
   private updateTimeout: any;
   private isUpdating = false;
+
+  // Audio handling
+  private hornAudio: HTMLAudioElement;
+  private isHornPlaying = false;
+  private musicAudio: HTMLAudioElement;
+  private isMusicPlaying = false;
 
   // BehaviorSubjects for all controls
   private dayNightModeSubject = new BehaviorSubject<boolean>(false);
@@ -50,8 +56,47 @@ export class VehicleControlService implements OnDestroy {
   honkHorn$ = this.honkHornSubject.asObservable().pipe(distinctUntilChanged());
 
   constructor(private http: HttpClient) {
+    // Initialize horn audio
+    this.hornAudio = new Audio();
+    this.hornAudio.src = 'assets/claxon.mp3'; // Update this path to your horn sound file
+    this.hornAudio.load();
+    this.hornAudio.loop = true;
+
+    // Initialize music audio
+    this.musicAudio = new Audio();
+    this.musicAudio.src = 'assets/music.mp3'; // Update path to your music file
+    this.musicAudio.load();
+    this.musicAudio.loop = true;
+
+    // Subscribe to horn state changes
+    this.honkHorn$.subscribe(state => this.handleHornSound(state));
+    this.musicPlaying$.subscribe(state => this.handleMusicSound(state));
+
     this.loadInitialState();
     this.startPolling();
+  }
+
+  private handleHornSound(state: boolean): void {
+    if (state && !this.isHornPlaying) {
+      this.hornAudio.play()
+        .then(() => this.isHornPlaying = true)
+        .catch(e => console.error('Error playing horn sound:', e));
+    } else if (!state && this.isHornPlaying) {
+      this.hornAudio.pause();
+      this.hornAudio.currentTime = 0;
+      this.isHornPlaying = false;
+    }
+  }
+  private handleMusicSound(state: boolean): void {
+    if (state && !this.isMusicPlaying) {
+      this.musicAudio.play()
+        .then(() => this.isMusicPlaying = true)
+        .catch(e => console.error('Error playing music:', e));
+    } else if (!state && this.isMusicPlaying) {
+      this.musicAudio.pause();
+      this.musicAudio.currentTime = 0;
+      this.isMusicPlaying = false;
+    }
   }
 
   startPolling(): void {
@@ -103,6 +148,10 @@ export class VehicleControlService implements OnDestroy {
     if (state.honkHorn !== undefined && state.honkHorn !== this.honkHornSubject.value) {
       this.honkHornSubject.next(state.honkHorn);
       if (!fromPolling) this.queueUpdate({ honkHorn: state.honkHorn });
+    }
+    if (state.musicPlaying !== undefined && state.musicPlaying !== this.musicPlayingSubject.value) {
+      this.musicPlayingSubject.next(state.musicPlaying);
+      if (!fromPolling) this.queueUpdate({ musicPlaying: state.musicPlaying });
     }
   }
 
@@ -222,6 +271,7 @@ export class VehicleControlService implements OnDestroy {
   setMusicPlaying(state: boolean): void {
     if (this.musicPlayingSubject.value !== state) {
       this.musicPlayingSubject.next(state);
+      this.queueUpdate({ musicPlaying: state });
     }
   }
 
@@ -239,7 +289,6 @@ export class VehicleControlService implements OnDestroy {
     }
   }
 
-  // Legacy honk method (can be removed if not needed)
   honkHorn(): void {
     this.setHorn(true);
   }
@@ -250,7 +299,6 @@ export class VehicleControlService implements OnDestroy {
     }
   }
 
-  // ========== PRIVATE METHODS ==========
   private loadInitialState(): void {
     this.http.get<ApiState>(this.apiUrl).subscribe({
       next: (state) => {
@@ -312,6 +360,11 @@ export class VehicleControlService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.hornAudio.pause();
+    this.hornAudio.remove();
+    this.musicAudio.pause();
+    this.musicAudio.remove();
+    
     this.stopPolling();
     if (this.updateTimeout) {
       clearTimeout(this.updateTimeout);
