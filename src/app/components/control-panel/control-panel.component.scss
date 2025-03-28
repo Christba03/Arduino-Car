@@ -23,11 +23,11 @@ $color-green-bright: #2a3f5f; // Dark Slate Blue
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 10;
-  padding: 30px;
+  padding: 10px;
   border: 2px solid $color-secondary;
   border-radius: 20px;
   box-shadow: 3px 4px 0px 1px $color-tertiary;
-  width: 400px;
+  width: 350px;
 }
 
 .title {
