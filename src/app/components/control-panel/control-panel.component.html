@@ -40,9 +40,10 @@
     </div>
     
     <div class="bottom_controls">
-      <button class="claxon_button">
-        <i class="horn-icon">📢</i> Honk Horn
-      </button>
+      <app-custom-toggle 
+        [label]="'Horn'" 
+        [(ngModel)]="hornActive">
+      </app-custom-toggle>
       
       <app-custom-toggle 
         [label]="'Music'" 

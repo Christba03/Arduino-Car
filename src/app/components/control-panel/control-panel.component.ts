@@ -24,7 +24,6 @@ export class ControlPanelComponent {
 
   }
 
-  // Bind these directly to your template
   onDayNightChange() {
     this.vehicleControl.setDayNightMode(this.dayNightMode);
   }
@@ -62,6 +61,13 @@ export class ControlPanelComponent {
   }
   set insideLightsOn(state: boolean) {
     this.vehicleControl.setInsideLights(state);
+  }
+  get hornActive(): boolean {
+    return this.vehicleControl.getHornState();
+  }
+  
+  set hornActive(state: boolean) {
+    this.vehicleControl.setHorn(state);
   }
 
   get musicPlaying(): boolean {

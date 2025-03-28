@@ -36,7 +36,7 @@ export class VehicleControlService implements OnDestroy {
   private insideLightsSubject = new BehaviorSubject<boolean>(false);
   private musicPlayingSubject = new BehaviorSubject<boolean>(false);
   private weatherSubject = new BehaviorSubject<WeatherType>('soleado');
-  private honkHornSubject = new BehaviorSubject<void>(undefined);
+  private honkHornSubject = new BehaviorSubject<boolean>(false);
 
   // Exposed observables
   dayNightMode$ = this.dayNightModeSubject.asObservable().pipe(distinctUntilChanged());
@@ -47,7 +47,7 @@ export class VehicleControlService implements OnDestroy {
   insideLightsOn$ = this.insideLightsSubject.asObservable().pipe(distinctUntilChanged());
   musicPlaying$ = this.musicPlayingSubject.asObservable().pipe(distinctUntilChanged());
   weather$ = this.weatherSubject.asObservable().pipe(distinctUntilChanged());
-  honkHorn$ = this.honkHornSubject.asObservable();
+  honkHorn$ = this.honkHornSubject.asObservable().pipe(distinctUntilChanged());
 
   constructor(private http: HttpClient) {
     this.loadInitialState();
@@ -99,6 +99,10 @@ export class VehicleControlService implements OnDestroy {
     if (state.doorsLocked !== this.doorsLockedSubject.value) {
       this.doorsLockedSubject.next(state.doorsLocked);
       if (!fromPolling) this.queueUpdate({ doorsLocked: state.doorsLocked });
+    }
+    if (state.honkHorn !== undefined && state.honkHorn !== this.honkHornSubject.value) {
+      this.honkHornSubject.next(state.honkHorn);
+      if (!fromPolling) this.queueUpdate({ honkHorn: state.honkHorn });
     }
   }
 
@@ -163,6 +167,10 @@ export class VehicleControlService implements OnDestroy {
     return this.musicPlayingSubject.value;
   }
 
+  getHornState(): boolean {
+    return this.honkHornSubject.value;
+  }
+
   getCurrentWeather(): WeatherType {
     return this.weatherSubject.value;
   }
@@ -217,6 +225,13 @@ export class VehicleControlService implements OnDestroy {
     }
   }
 
+  setHorn(state: boolean): void {
+    if (this.honkHornSubject.value !== state) {
+      this.honkHornSubject.next(state);
+      this.queueUpdate({ honkHorn: state });
+    }
+  }
+
   setWeather(weather: WeatherType): void {
     if (this.weatherSubject.value !== weather) {
       this.weatherSubject.next(weather);
@@ -224,12 +239,9 @@ export class VehicleControlService implements OnDestroy {
     }
   }
 
+  // Legacy honk method (can be removed if not needed)
   honkHorn(): void {
-    this.honkHornSubject.next();
-    this.queueUpdate({ honkHorn: true });
-    setTimeout(() => {
-      this.queueUpdate({ honkHorn: false });
-    }, 500);
+    this.setHorn(true);
   }
 
   flushUpdates(): void {
